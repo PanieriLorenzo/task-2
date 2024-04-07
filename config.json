@@ -1,0 +1,13 @@
+{
+    "port": 12345,
+    "passive_ports": [
+        5678
+    ],
+    "server_ip": "192.168.0.139",
+    "username": "admin",
+    "password": "admin",
+    "file": "bigfile.dat",
+    "wait": 60,
+    "mode": "RST",
+    "iface": "wlp6s0"
+}
