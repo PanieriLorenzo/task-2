@@ -1,6 +1,6 @@
 1. You should have three devices that can see each other's traffic. The *server*, the *client* and the *attacker*.
 1. Clone this project to the client device
-1. Clone this project to the attacker device
+1. Clone this project to the attacker device. Note that the attacker needs to have full access to the traffic between client and server, so either you have an Ethernet hub, or you run the attacker on the same physical device as the client.
 1. Install an FTP server on a third device. We used an android app called ["primitive ftp"]().
 1. Set username and password on server. We used `admin admin`.
 1. Run `make genfile` to generate a dummy file called `bigfile.dat` to send over FTP

